@@ -20,13 +20,13 @@ spec:
         valueFiles:
           - $values/cluster-api/dev-cluster/values.yaml
     # Values from git repository
-    - repoURL: https://github.com/phuchoang2603/self-host.git
+    - repoURL: https://github.com/phuchoang2603/hybrid-k8s.git
       targetRevision: main
       ref: values
     # Git source for additional manifests
-    - repoURL: "https://github.com/phuchoang2603/self-host.git"
+    - repoURL: "https://github.com/phuchoang2603/hybrid-k8s.git"
       targetRevision: main
-      path: cluster-api/dev-cluster/manifests
+      path: cluster-api/shared-manifests
   syncPolicy:
     automated:
       prune: true

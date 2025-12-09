@@ -13,7 +13,7 @@ spec:
   sources:
     - repoURL: https://kubernetes-sigs.github.io/cluster-api-operator
       chart: cluster-api-operator
-      targetRevision: 0.24.0
+      targetRevision: 0.24.1
       helm:
         values: |
           # Cluster API Operator Configuration
@@ -53,9 +53,9 @@ spec:
             namespace: capi-operator-system
 
     # Git source for additional manifests
-    - repoURL: "https://github.com/phuchoang2603/self-host.git"
+    - repoURL: "https://github.com/phuchoang2603/hybrid-k8s.git"
       targetRevision: main
-      path: cluster-api/manifests
+      path: cluster-api/shared-manifests
 
   syncPolicy:
     automated:
