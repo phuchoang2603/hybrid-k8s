@@ -11,22 +11,10 @@ spec:
     server: https://kubernetes.default.svc
     namespace: default
   project: default
-  sources:
-    # Helm chart source
-    - repoURL: https://clastix.github.io/charts
-      chart: capi-kamaji-proxmox
-      targetRevision: 0.0.4
-      helm:
-        valueFiles:
-          - $values/cluster-api/dev-cluster/values.yaml
-    # Values from git repository
-    - repoURL: https://github.com/phuchoang2603/hybrid-k8s.git
-      targetRevision: main
-      ref: values
-    # Git source for additional manifests
-    - repoURL: "https://github.com/phuchoang2603/hybrid-k8s.git"
-      targetRevision: main
-      path: cluster-api/shared-manifests
+  source:
+    repoURL: "https://github.com/phuchoang2603/hybrid-k8s.git"
+    targetRevision: main
+    path: cluster-api/dev-cluster
   syncPolicy:
     automated:
       prune: true

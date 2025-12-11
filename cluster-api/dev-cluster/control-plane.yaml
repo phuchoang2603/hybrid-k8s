@@ -5,7 +5,6 @@ metadata:
     cluster.x-k8s.io/cluster-name: dev-cluster
     cni: canal
   name: dev-cluster
-  namespace: default
 spec:
   addons:
     coreDNS: {}
@@ -19,6 +18,7 @@ spec:
       - ExternalIP
       - Hostname
   network:
+    serviceAddress: 10.69.1.138
     serviceType: LoadBalancer
   replicas: 3
   version: v1.29.6

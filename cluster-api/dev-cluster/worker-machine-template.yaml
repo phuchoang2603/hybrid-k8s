@@ -15,10 +15,10 @@ spec:
       disks:
         bootVolume:
           disk: scsi0
-          sizeGb: 50
+          sizeGb: 20
       format: qcow2
       full: true
-      memoryMiB: 4096
+      memoryMiB: 2096
       network:
         default:
           bridge: vmbr1
@@ -34,5 +34,5 @@ spec:
       numSockets: 1
       pool: truenas
       sourceNode: pve
-      storage: truenas
+      storage: local-lvm
       templateID: 100

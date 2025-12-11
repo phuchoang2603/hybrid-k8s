@@ -4,19 +4,16 @@ metadata:
   labels:
     cluster.x-k8s.io/cluster-name: dev-cluster
   name: dev-cluster-default-workers
-  namespace: default
 spec:
   clusterName: dev-cluster
   replicas: 3
   selector:
     matchLabels:
       cluster.x-k8s.io/cluster-name: dev-cluster
-      node-pool: default
   template:
     metadata:
       labels:
         cluster.x-k8s.io/cluster-name: dev-cluster
-        node-pool: default
         node-role.kubernetes.io/node: ""
     spec:
       bootstrap:

@@ -4,7 +4,6 @@ metadata:
   labels:
     cluster.x-k8s.io/cluster-name: dev-cluster
   name: dev-cluster
-  namespace: default
 spec:
   allowedNodes:
     - pve
@@ -19,9 +18,7 @@ spec:
   externalManagedControlPlane: true
   ipv4Config:
     addresses:
-      - 10.69.2.1
-      - 10.69.2.2
-      - 10.69.2.3
+      - 10.69.2.1-10.69.2.9
     gateway: 10.69.0.1
     prefix: 16
   schedulerHints:
