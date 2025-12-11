@@ -11,7 +11,7 @@ spec:
     - pve3
   credentialsRef:
     name: proxmox-credentials
-    namespace: default
+    namespace: capi-operator-system
   dnsServers:
     - 10.69.0.1
     - 1.1.1.1

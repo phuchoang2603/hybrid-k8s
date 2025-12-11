@@ -19,6 +19,10 @@ spec:
       - Hostname
   network:
     serviceAddress: 10.69.1.138
+    serviceAnnotations:
+      kube-vip.io/loadbalancerIPs: 10.69.1.138
+    serviceLabels:
+      cluster.x-k8s.io/cluster-name: dev-cluster
     serviceType: LoadBalancer
-  replicas: 3
+  replicas: 1
   version: v1.29.6
