@@ -1,0 +1,24 @@
+apiVersion: controlplane.cluster.x-k8s.io/v1alpha1
+kind: KamajiControlPlane
+metadata:
+  labels:
+    cluster.x-k8s.io/cluster-name: dev-cluster
+    cni: canal
+  name: dev-cluster
+  namespace: default
+spec:
+  addons:
+    coreDNS: {}
+    konnectivity: {}
+    kubeProxy: {}
+  dataStoreName: default
+  kubelet:
+    cgroupfs: systemd
+    preferredAddressTypes:
+      - InternalIP
+      - ExternalIP
+      - Hostname
+  network:
+    serviceType: LoadBalancer
+  replicas: 3
+  version: v1.29.6
