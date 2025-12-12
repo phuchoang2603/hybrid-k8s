@@ -14,7 +14,7 @@ spec:
   source:
     repoURL: "https://github.com/phuchoang2603/hybrid-k8s.git"
     targetRevision: main
-    path: cluster-api/dev-cluster
+    path: cluster-api/kamaji-proxmox-cluster
   syncPolicy:
     automated:
       prune: true
