@@ -25,7 +25,6 @@ spec:
                 featureGates:
                   ClusterTopology: "true"
                   ClusterResourceSet: "true"
-                  KubeadmBootstrapFormatIgnition: "true"
 
           # Enable Proxmox infrastructure provider
           infrastructure:
@@ -35,7 +34,6 @@ spec:
                 featureGates:
                   ClusterTopology: "true"
                   ClusterResourceSet: "true"
-                  KubeadmBootstrapFormatIgnition: "true"
 
           # Enable in-cluster IPAM provider
           ipam:
@@ -49,11 +47,22 @@ spec:
                 featureGates:
                   ClusterTopology: "true"
                   ClusterResourceSet: "true"
-                  KubeadmBootstrapFormatIgnition: "true"
+            rke2:
+              version: v0.21.1
+              manager:
+                featureGates:
+                  ClusterTopology: "true"
+                  ClusterResourceSet: "true"
 
-          # bootstrap:
-          #   kubeadm:
-          #     version: v1.12.0
+          bootstrap:
+            kubeadm:
+              version: v1.12.0
+            rke2:
+              version: v0.21.1
+              manager:
+                featureGates:
+                  ClusterTopology: "true"
+                  ClusterResourceSet: "true"
 
           configSecret:
             name: config-vars
