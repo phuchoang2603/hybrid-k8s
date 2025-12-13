@@ -41,12 +41,12 @@ spec:
               version: v1.0.3
 
           controlPlane:
-            kamaji:
-              version: v0.15.4
-              manager:
-                featureGates:
-                  ClusterTopology: "true"
-                  ClusterResourceSet: "true"
+            # kamaji:
+            #   version: v0.15.4
+            #   manager:
+            #     featureGates:
+            #       ClusterTopology: "true"
+            #       ClusterResourceSet: "true"
             rke2:
               version: v0.21.1
               manager:
@@ -55,8 +55,8 @@ spec:
                   ClusterResourceSet: "true"
 
           bootstrap:
-            kubeadm:
-              version: v1.12.0
+            # kubeadm:
+            #   version: v1.12.0
             rke2:
               version: v0.21.1
               manager:

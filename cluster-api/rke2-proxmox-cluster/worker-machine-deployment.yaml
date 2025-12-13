@@ -1,0 +1,31 @@
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachineDeployment
+metadata:
+  labels:
+    cluster.x-k8s.io/cluster-name: rke2-proxmox
+  name: rke2-proxmox-workers
+  namespace: default
+spec:
+  clusterName: rke2-proxmox
+  replicas: 3
+  selector:
+    matchLabels:
+      cluster.x-k8s.io/cluster-name: rke2-proxmox
+  template:
+    metadata:
+      labels:
+        cluster.x-k8s.io/cluster-name: rke2-proxmox
+    spec:
+      version: v1.29.6+rke2r1
+      clusterName: rke2-proxmox
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+          kind: RKE2ConfigTemplate
+          name: rke2-proxmox-worker
+          namespace: default
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+        kind: ProxmoxMachineTemplate
+        name: rke2-proxmox-worker
+        namespace: default

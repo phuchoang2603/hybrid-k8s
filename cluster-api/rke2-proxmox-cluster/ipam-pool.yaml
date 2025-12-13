@@ -1,0 +1,12 @@
+apiVersion: ipam.cluster.x-k8s.io/v1alpha2
+kind: InClusterIPPool
+metadata:
+  labels:
+    cluster.x-k8s.io/cluster-name: rke2-proxmox
+  name: rke2-proxmox-ipam-pool
+  namespace: default
+spec:
+  addresses:
+    - 10.69.2.10-10.69.2.19
+  gateway: 10.69.0.1
+  prefix: 16
