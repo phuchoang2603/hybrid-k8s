@@ -1,0 +1,85 @@
+kind: KamajiControlPlane
+apiVersion: controlplane.cluster.x-k8s.io/v1alpha1
+metadata:
+  name: {{ include "cluster-api-kamaji-proxmox.cluster-name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    cluster.x-k8s.io/cluster-name: {{ include "cluster-api-kamaji-proxmox.cluster-name" . | quote }}
+    {{- with .Values.cluster.controlPlane.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  dataStoreName: {{ .Values.cluster.controlPlane.dataStoreName | quote }}
+  {{- with .Values.cluster.controlPlane.addons }}
+  addons:
+    {{- if hasKey . "coreDNS" }}
+    coreDNS:
+      {{- toYaml .coreDNS | nindent 6 }}
+    {{- end }}
+    {{- if hasKey . "kubeProxy" }}
+    kubeProxy:
+      {{- toYaml .kubeProxy | nindent 6 }}
+    {{- end }}
+    {{- if hasKey . "konnectivity" }}
+    konnectivity:
+      {{- toYaml .konnectivity | nindent 6 }}
+    {{- end }}
+  {{- end }}
+  deployment:
+    additionalMetadata:
+      labels:
+        {{- with .Values.cluster.controlPlane.deployment.additionalMetadata.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        {{- with .Values.cluster.controlPlane.deployment.additionalMetadata.annotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    podAdditionalMetadata:
+      labels:
+        {{- with .Values.cluster.controlPlane.deployment.podAdditionalMetadata.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        {{- with .Values.cluster.controlPlane.deployment.podAdditionalMetadata.annotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    affinity:
+      {{- with .Values.cluster.controlPlane.deployment.affinity }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+    tolerations:
+      {{- with .Values.cluster.controlPlane.deployment.tolerations }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+    nodeSelector:
+      {{- with .Values.cluster.controlPlane.deployment.nodeSelector }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+    topologySpreadConstraints:
+      {{- with .Values.cluster.controlPlane.deployment.topologySpreadConstraints }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+  kubelet:
+    cgroupfs: {{ .Values.cluster.controlPlane.kubelet.cgroupfs | quote }}
+    preferredAddressTypes:
+      {{- range .Values.cluster.controlPlane.kubelet.preferredAddressTypes }}
+      - {{ . | quote }}
+      {{- end }}
+  network:
+    serviceAddress: {{ .Values.cluster.controlPlane.network.serviceAddress | quote }}
+    serviceType: {{ .Values.cluster.controlPlane.network.serviceType | quote }}
+    serviceAnnotations:
+      {{- with .Values.cluster.controlPlane.network.serviceAnnotations }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+    serviceLabels:
+      {{- with .Values.cluster.controlPlane.network.serviceLabels }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+    certSANs:
+      {{- range .Values.cluster.controlPlane.network.certSANs }}
+      - {{ . | quote }}
+      {{- end }}
+  version: {{ .Values.cluster.controlPlane.version | quote }}
+  replicas: {{ .Values.cluster.controlPlane.replicas }}
