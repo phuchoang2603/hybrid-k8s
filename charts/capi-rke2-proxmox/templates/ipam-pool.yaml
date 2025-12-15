@@ -1,0 +1,14 @@
+{{- if .Values.ipamProvider.enabled }}
+apiVersion: ipam.cluster.x-k8s.io/v1alpha2
+kind: InClusterIPPool
+metadata:
+  name: {{ include "capi-rke2-proxmox.cluster-name" . }}-ipam-pool
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "capi-rke2-proxmox.labels" . | nindent 4 }}
+spec:
+  addresses:
+    {{- toYaml .Values.ipamProvider.ranges | nindent 4 }}
+  gateway: {{ .Values.ipamProvider.gateway }}
+  prefix: {{ .Values.ipamProvider.prefix }}
+{{- end }}

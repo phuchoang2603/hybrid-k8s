@@ -1,0 +1,16 @@
+Thank you for installing {{ .Chart.Name }} {{ .Chart.Version }}
+
+Your RKE2 Kubernetes cluster "{{ include "capi-rke2-proxmox.cluster-name" . }}" is being provisioned on Proxmox VE.
+
+Control Plane: {{ .Values.cluster.controlPlane.replicas }} nodes
+Worker Nodes: {{ range .Values.nodePools }}{{ .replicas }} {{ .name }}{{ end }}
+
+To monitor the cluster creation:
+  kubectl get cluster,rke2controlplane,machines -n {{ .Release.Namespace }}
+
+To access your cluster once ready:
+  clusterctl get kubeconfig {{ include "capi-rke2-proxmox.cluster-name" . }} -n {{ .Release.Namespace }} > {{ include "capi-rke2-proxmox.cluster-name" . }}.kubeconfig
+  export KUBECONFIG=$PWD/{{ include "capi-rke2-proxmox.cluster-name" . }}.kubeconfig
+  kubectl get nodes
+
+Control Plane Endpoint: {{ .Values.cluster.controlPlaneEndpoint.host }}:{{ .Values.cluster.controlPlaneEndpoint.port }}

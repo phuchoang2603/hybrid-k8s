@@ -1,0 +1,49 @@
+{{- range .Values.nodePools }}
+---
+kind: MachineDeployment
+apiVersion: cluster.x-k8s.io/v1beta1
+metadata:
+  {{- with .autoscaling }}
+  {{- if .enabled }}
+  annotations:
+    cluster.x-k8s.io/cluster-api-autoscaler-node-group-min-size: {{ .minSize | quote }}
+    cluster.x-k8s.io/cluster-api-autoscaler-node-group-max-size: {{ .maxSize | quote }}
+  {{- end }}
+  {{- end }}
+  labels:
+    {{- with .autoscaling }}
+    {{- if .enabled }}
+    {{- .labels | toYaml | nindent 4 }}
+    {{- end }}
+    {{- end }}
+    cluster.x-k8s.io/cluster-name: {{ include "capi-rke2-proxmox.cluster-name" $ | quote }}
+  name: {{ include "capi-rke2-proxmox.cluster-name" $ }}-{{ .name }}-md
+  namespace: {{ $.Release.Namespace }}
+spec:
+  clusterName: {{ include "capi-rke2-proxmox.cluster-name" $ | quote }}
+  replicas: {{ .replicas }}
+  selector:
+    matchLabels:
+      cluster.x-k8s.io/cluster-name: {{ include "capi-rke2-proxmox.cluster-name" $ | quote }}
+  template:
+    metadata:
+      labels:
+        {{- with .autoscaling }}
+        {{- if .enabled }}
+        {{- .labels | toYaml | nindent 8 }}
+        {{- end }}
+        {{- end }}
+        cluster.x-k8s.io/cluster-name: {{ include "capi-rke2-proxmox.cluster-name" $ | quote }}
+    spec:
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+          kind: RKE2ConfigTemplate
+          name: {{ include "capi-rke2-proxmox.cluster-name" $ }}-{{ .name }}-rke2config-{{ include "rke2ConfigTemplateHash" (dict "nodePool" .) }}
+      clusterName: {{ include "capi-rke2-proxmox.cluster-name" $ | quote }}
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+        kind: ProxmoxMachineTemplate
+        name: {{ include "capi-rke2-proxmox.cluster-name" $ }}-{{ .name }}-proxmox-{{ include "ProxmoxMachineTemplateHash" (dict "nodePool" . "Global" $) }}
+      version: {{ $.Values.cluster.controlPlane.version | quote }}
+{{- end }}

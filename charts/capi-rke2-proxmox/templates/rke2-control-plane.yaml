@@ -1,0 +1,53 @@
+{{- $clusterName := include "capi-rke2-proxmox.cluster-name" . }}
+{{- $registrationAddress := .Values.cluster.controlPlane.registrationAddress | default .Values.cluster.controlPlaneEndpoint.host }}
+apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+kind: RKE2ControlPlane
+metadata:
+  name: {{ $clusterName }}-control-plane
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "capi-rke2-proxmox.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.cluster.controlPlane.replicas }}
+  version: {{ .Values.cluster.controlPlane.version }}
+  {{- if .Values.cluster.controlPlane.serverConfig }}
+  serverConfig:
+    {{- toYaml .Values.cluster.controlPlane.serverConfig | nindent 4 }}
+  {{- end }}
+  {{- if .Values.cluster.controlPlane.agentConfig }}
+  agentConfig:
+    {{- toYaml .Values.cluster.controlPlane.agentConfig | nindent 4 }}
+  {{- end }}
+  machineTemplate:
+    infrastructureRef:
+      apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+      kind: ProxmoxMachineTemplate
+      name: {{ $clusterName }}-control-plane-{{ include "ControlPlaneMachineTemplateHash" (dict "Global" .) }}
+    {{- with .Values.cluster.controlPlane.machineTemplate }}
+    nodeDrainTimeout: {{ .nodeDrainTimeout | default "2m" }}
+    nodeDeletionTimeout: {{ .nodeDeletionTimeout | default "30s" }}
+    nodeVolumeDetachTimeout: {{ .nodeVolumeDetachTimeout | default "5m" }}
+    {{- end }}
+  registrationMethod: {{ .Values.cluster.controlPlane.registrationMethod | default "address" }}
+  registrationAddress: {{ $registrationAddress | quote }}
+  {{- if .Values.cluster.controlPlane.preRKE2Commands }}
+  preRKE2Commands:
+    {{- toYaml .Values.cluster.controlPlane.preRKE2Commands | nindent 4 }}
+    {{- if .Values.cluster.controlPlane.kubeVip.enabled }}
+    - {{ include "capi-rke2-proxmox.kubeVipCommand" . }}
+    {{- end }}
+  {{- else if .Values.cluster.controlPlane.kubeVip.enabled }}
+  preRKE2Commands:
+    - {{ include "capi-rke2-proxmox.kubeVipCommand" . }}
+  {{- end }}
+  {{- if .Values.cluster.controlPlane.kubeVip.enabled }}
+  files:
+    - path: /var/lib/rancher/rke2/server/manifests/kube-vip-rbac.yaml
+      content: |
+        {{- include "capi-rke2-proxmox.kubeVipRBAC" . | nindent 8 }}
+      owner: root:root
+  {{- end }}
+  {{- if .Values.cluster.controlPlane.rolloutStrategy }}
+  rolloutStrategy:
+    {{- toYaml .Values.cluster.controlPlane.rolloutStrategy | nindent 4 }}
+  {{- end }}

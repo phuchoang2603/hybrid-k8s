@@ -1,0 +1,25 @@
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+kind: ProxmoxCluster
+metadata:
+  name: {{ include "capi-rke2-proxmox.cluster-name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "capi-rke2-proxmox.labels" . | nindent 4 }}
+spec:
+  allowedNodes:
+    {{- toYaml .Values.cluster.allowedNodes | nindent 4 }}
+  controlPlaneEndpoint:
+    host: {{ .Values.cluster.controlPlaneEndpoint.host | quote }}
+    port: {{ .Values.cluster.controlPlaneEndpoint.port }}
+  credentialsRef:
+    name: {{ .Values.cluster.credentialsRef.name }}
+    namespace: {{ .Values.cluster.credentialsRef.namespace | default .Release.Namespace }}
+  dnsServers:
+    {{- toYaml .Values.cluster.dnsServers | nindent 4 }}
+  ipv4Config:
+    addresses:
+      {{- toYaml .Values.cluster.ipv4Config.addresses | nindent 6 }}
+    gateway: {{ .Values.cluster.ipv4Config.gateway }}
+    prefix: {{ .Values.cluster.ipv4Config.prefix }}
+  schedulerHints:
+    memoryAdjustment: {{ .Values.cluster.schedulerHints.memoryAdjustment }}

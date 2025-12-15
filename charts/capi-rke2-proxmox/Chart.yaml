@@ -1,0 +1,6 @@
+apiVersion: v2
+name: capi-rke2-proxmox
+description: A Helm chart for deploying RKE2 Kubernetes clusters on Proxmox using Cluster API
+type: application
+version: 0.1.0
+appVersion: "1.32.3"

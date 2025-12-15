@@ -1,0 +1,149 @@
+proxmox:
+  secret:
+    name: proxmox-credentials
+    namespace: default
+
+# IPAM configuration for automatic IP address allocation
+ipamProvider:
+  enabled: true
+  ranges:
+    - "10.69.1.111-10.69.1.119"
+  prefix: "16"
+  gateway: "10.69.0.1"
+
+cluster:
+  # Cluster name - will be used as the resource name
+  name: rke2-proxmox
+
+  clusterNetwork:
+    apiServerPort: 6443
+    serviceDomain: cluster.local
+    pods:
+      cidrBlocks: ["10.93.0.0/16"]
+    services:
+      cidrBlocks: ["10.96.0.0/16"]
+
+  controlPlaneEndpoint:
+    host: "10.69.1.110"
+    port: 6443
+
+  controlPlane:
+    replicas: 3
+    version: v1.32.3+rke2r1
+    
+    # RKE2 server configuration
+    serverConfig:
+      cni: calico
+    
+    # RKE2 agent configuration
+    agentConfig:
+      kubelet:
+        extraArgs:
+          - provider-id=proxmox://'{{ ds.meta_data.instance_id }}'
+    
+    # Machine template settings
+    machineTemplate:
+      nodeDrainTimeout: 2m
+      nodeDeletionTimeout: 30s
+      nodeVolumeDetachTimeout: 5m
+    
+    # Registration settings
+    registrationMethod: address
+    # registrationAddress defaults to controlPlaneEndpoint.host
+    
+    # Kube-vip configuration
+    kubeVip:
+      enabled: true
+      version: v0.8.0
+    
+    # Commands to run before RKE2 installation
+    preRKE2Commands:
+      - apt-get update && apt-get install -y qemu-guest-agent
+      - systemctl enable qemu-guest-agent --now
+    
+    # Rollout strategy
+    rolloutStrategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxSurge: 1
+
+  # Proxmox configuration
+  allowedNodes:
+    - pve
+    - pve2
+    - pve3
+
+  credentialsRef:
+    name: proxmox-credentials
+    namespace: default
+
+  dnsServers:
+    - 10.69.0.1
+    - 1.1.1.1
+
+  ipv4Config:
+    addresses:
+      - 10.69.1.111-10.69.1.119
+    gateway: 10.69.0.1
+    prefix: 16
+
+  schedulerHints:
+    memoryAdjustment: 0
+
+# Worker node pools
+nodePools:
+  - name: default
+    replicas: 3
+
+    # Autoscaling configuration (requires Cluster Autoscaler)
+    autoscaling:
+      enabled: false
+      minSize: 2
+      maxSize: 6
+
+    # Proxmox node that hosts the template
+    sourceNode: pve
+
+    # Allowed nodes for VM placement
+    allowedNodes:
+      - pve
+      - pve2
+      - pve3
+
+    # VM template configuration
+    # Use template ID
+    templateId: 100
+
+    # Network configuration
+    network:
+      bridge: vmbr1
+      model: virtio
+      dnsServers:
+        - 10.69.0.1
+        - 1.1.1.1
+      addressesFromPools:
+        enabled: true
+
+    # Storage configuration
+    storage: truenas
+    format: qcow2
+
+    # Disk configuration
+    disks:
+      bootVolume:
+        disk: scsi0
+        sizeGb: 50
+
+    # VM resources
+    memoryMiB: 2048
+    numCores: 2
+    numSockets: 1
+    
+    # Full clone
+    full: true
+
+    # RKE2 agent configuration for workers
+    agentConfig:
+      kubelet:
+        extraArgs:
+          - provider-id=proxmox://'{{ ds.meta_data.instance_id }}'

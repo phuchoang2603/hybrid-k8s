@@ -1,0 +1,16 @@
+{{- range .Values.nodePools }}
+{{- $hash := include "rke2ConfigTemplateHash" (dict "nodePool" .) }}
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+kind: RKE2ConfigTemplate
+metadata:
+  name: {{ include "capi-rke2-proxmox.cluster-name" $ }}-{{ .name }}-rke2config-{{ $hash }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    cluster.x-k8s.io/cluster-name: {{ include "capi-rke2-proxmox.cluster-name" $ }}
+    node-pool: {{ .name }}
+spec:
+  template:
+    spec:
+      {{- include "rke2ConfigTemplateSpec" (dict "nodePool" .) | nindent 6 }}
+{{- end }}
